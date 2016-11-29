@@ -1,27 +1,25 @@
 package messagesConsumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@ComponentScan
 public class MainClass {
 	
-	@Autowired
+	
 	ConsumerTopic toHbaseConsumer;
 	
-	public void start(){
-		toHbaseConsumer = new ConsumerTopic();
-		toHbaseConsumer.startReading();
-	}
-	
+	/*Utilization example
+	mvn clean package	
+	java -jar target/uber-article02_toHbaseConsumer-0.0.1-SNAPSHOT.jar localhost:9092 atmOperations gp01
+    */
 	public static void main(String[] args) {
-		ApplicationContext context = new AnnotationConfigApplicationContext(MainClass.class);
 		System.out.println("Start reading kafka queue...");
-		new MainClass().start();		
+		MainClass mainClass = new MainClass();
+		
+		String brokerList = args[0]; //"localhost:9092";
+		String topic = args[1]; //"atmOperations";
+		String groupId = args[2]; //"gp01";
+		
+		
+		mainClass.toHbaseConsumer = ConsumerTopic.ConsumerTopicBuilder(brokerList, topic, groupId);
+		mainClass.toHbaseConsumer.startReading();		
 
 	}
 
