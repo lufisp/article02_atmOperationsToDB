@@ -15,6 +15,8 @@ import org.apache.kafka.common.errors.WakeupException;
 import com.twitter.bijection.Injection;
 import com.twitter.bijection.avro.GenericAvroCodecs;
 
+import hbaseAdo.HbaseDAO;
+
 
 public class ConsumerTopic {
 	
@@ -22,14 +24,21 @@ public class ConsumerTopic {
 	private ConsumerTopic(){}	
 	
 		
-	private KafkaConsumer<String, byte[]> consumer; 
+	private KafkaConsumer<String, byte[]> consumer;
+	protected AtmProducerToWebService producer;
 	protected String topic;
 	protected Properties kafkaProps;
+	protected HbaseDAO  hbaseDao;
+	protected String hbaseTableName;
+	protected String hbaseColumnFamilyName;
+	protected String hbaseColumnName;
 	
 	public static final String USER_SCHEMA = "{" + "\"type\":\"record\"," + "\"name\":\"atmRecord\"," + "\"fields\":["
 			+ "  { \"name\":\"id\", \"type\":\"string\" }," + "  { \"name\":\"operValue\", \"type\":\"int\" }" + "]}";
 
 	public void startReading() {
+		
+		
 
 		final Thread mainThread = Thread.currentThread();
 
@@ -63,8 +72,14 @@ public class ConsumerTopic {
 				for (ConsumerRecord<String, byte[]> avroRecord : records) {
 					System.out.printf("offset = %d\n", avroRecord.offset());
 					GenericRecord record = recordInjection.invert(avroRecord.value()).get();
+					String id = record.get("id").toString();
+					String value = record.get("operValue").toString();
 
 					System.out.println("id= " + record.get("id") + ", operValue= " + record.get("operValue"));
+					int valueHbase = hbaseDao.get(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id);
+					int valueUpdated = valueHbase + Integer.parseInt(value);
+					producer.produce(id, String.valueOf(valueUpdated));
+					hbaseDao.save(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id, valueUpdated);
 
 				}
 				for (TopicPartition tp : consumer.assignment())
@@ -74,24 +89,30 @@ public class ConsumerTopic {
 		} catch (WakeupException e) {
 			// ignore for shutdown
 		} finally {
-			consumer.close();
-			System.out.println("Closed consumer and we are done");
+			this.close();			
+			System.out.println("Closed consumer and producer we are done");
 		}
 	}
 	
-	public static ConsumerTopic ConsumerTopicBuilder(String brokerServer, String topic, String groupId){
+	public void close(){
+		this.consumer.close();
+		this.producer.closeProducer();
+		this.hbaseDao.closeConnection();
+	}
+	
+	public static ConsumerTopic ConsumerTopicBuilder(String brokerServer, String topic, String groupId, AtmProducerToWebService producer){
 		ConsumerTopic consumerTopic = new ConsumerTopic();
 		consumerTopic.topic = topic;
 		consumerTopic.kafkaProps = new Properties();
 		consumerTopic.kafkaProps.put("group.id", groupId);
 		consumerTopic.kafkaProps.put("bootstrap.servers", brokerServer);
 		consumerTopic.kafkaProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-		consumerTopic.kafkaProps.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+		consumerTopic.kafkaProps.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");		consumerTopic.producer = producer;
+		consumerTopic.hbaseDao = new HbaseDAO();
+		consumerTopic.hbaseColumnFamilyName = "Total";
+		consumerTopic.hbaseColumnName = "cash";
+		consumerTopic.hbaseTableName = "atm:AtmTotalCash";
 		return consumerTopic;		
 	}
-
-	
-	
-	
 
 }

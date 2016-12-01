@@ -1,4 +1,4 @@
-package hbaseWriter;
+package hbaseAdo;
 
 import java.io.IOException;
 
