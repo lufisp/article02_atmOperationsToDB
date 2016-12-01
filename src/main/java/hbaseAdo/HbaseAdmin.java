@@ -85,8 +85,8 @@ public class HbaseAdmin {
 
 	public static void main(String... args) {
 		HbaseAdmin ah = new HbaseAdmin();
-		ah.createNamespace("atm");
-		ah.createTable("atm","AtmTotalCash","Total");		
+		//ah.createNamespace("atm");
+		ah.createTable("atm","AtmTotalCash","Total","GeoLoc");		
 	}
 
 }

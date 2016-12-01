@@ -70,20 +70,21 @@ public class ConsumerTopic {
 				ConsumerRecords<String, byte[]> records = consumer.poll(1000);
 				System.out.println(System.currentTimeMillis() + "  --  waiting for data...");
 				for (ConsumerRecord<String, byte[]> avroRecord : records) {
-					System.out.printf("offset = %d\n", avroRecord.offset());
+					//System.out.printf("offset = %d\n", avroRecord.offset());
 					GenericRecord record = recordInjection.invert(avroRecord.value()).get();
 					String id = record.get("id").toString();
 					String value = record.get("operValue").toString();
 
 					System.out.println("id= " + record.get("id") + ", operValue= " + record.get("operValue"));
-					int valueHbase = hbaseDao.get(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id);
+					String valueHbaseString = hbaseDao.get(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id);
+					int valueHbase = valueHbaseString == "" ? 0 : Integer.parseInt(valueHbaseString);
 					int valueUpdated = valueHbase + Integer.parseInt(value);
 					producer.produce(id, String.valueOf(valueUpdated));
-					hbaseDao.save(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id, valueUpdated);
+					hbaseDao.save(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id, String.valueOf(valueUpdated));
 
 				}
-				for (TopicPartition tp : consumer.assignment())
-					System.out.println("Committing offset at position:" + consumer.position(tp));
+				//for (TopicPartition tp : consumer.assignment())
+				//	System.out.println("Committing offset at position:" + consumer.position(tp));
 				consumer.commitSync();
 			}
 		} catch (WakeupException e) {
@@ -107,8 +108,9 @@ public class ConsumerTopic {
 		consumerTopic.kafkaProps.put("group.id", groupId);
 		consumerTopic.kafkaProps.put("bootstrap.servers", brokerServer);
 		consumerTopic.kafkaProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-		consumerTopic.kafkaProps.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");		consumerTopic.producer = producer;
-		consumerTopic.hbaseDao = new HbaseDAO();
+		consumerTopic.kafkaProps.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");		
+		consumerTopic.producer = producer;
+		consumerTopic.hbaseDao = SingletonVariablesShare.INSTANCE.getHbaseDAO();
 		consumerTopic.hbaseColumnFamilyName = "Total";
 		consumerTopic.hbaseColumnName = "cash";
 		consumerTopic.hbaseTableName = "atm:AtmTotalCash";
