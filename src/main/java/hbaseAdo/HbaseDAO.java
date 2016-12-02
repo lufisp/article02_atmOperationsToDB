@@ -132,10 +132,12 @@ public class HbaseDAO {
 
 	public static final void main(String... args) {
 		HbaseDAO hbDAO = new HbaseDAO();
+		
+		/*
 		System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "1", "GeoLoc"));
 		System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "2", "Total", "GeoLoc"));
 		System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "3", "Total", "GeoLoc"));
-
+        */
 		/*
 		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "1", "1070");
 		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "2", "1770");
@@ -166,7 +168,7 @@ public class HbaseDAO {
 		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "8", "45.489599");
 		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "8", "-73.566572");
 		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "9", "45.509475");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "9", "-73553467");
+		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "9", "-73.553467");
 		 */
 		// hbDAO.delete("atm:AtmTotalCash", 1);
 		// hbDAO.delete("atm:AtmTotalCash", 2);
