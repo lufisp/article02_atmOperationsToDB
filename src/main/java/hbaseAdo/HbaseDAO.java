@@ -138,17 +138,17 @@ public class HbaseDAO {
 		System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "2", "Total", "GeoLoc"));
 		System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "3", "Total", "GeoLoc"));
         */
-		/*
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "1", "1070");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "2", "1770");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "3", "10000");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "4", "1800");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "5", "1960");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "6", "17600");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "7", "1070");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "8", "2760");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "9", "3760");
-		 */
+		
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "1", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "2", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "3", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "4", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "5", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "6", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "7", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "8", "100000");
+		  hbDAO.save("atm:AtmTotalCash", "Total", "cash", "9", "100000");
+		 
 
 		/*
 		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "1", "45.494676");
